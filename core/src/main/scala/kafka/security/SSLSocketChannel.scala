@@ -27,6 +27,7 @@ import javax.net.ssl.SSLEngineResult._
 import java.util.concurrent._
 import java.util.concurrent.atomic.AtomicInteger
 import kafka.utils.Logging
+import java.util
 
 object SSLSocketChannel {
 
@@ -204,6 +205,23 @@ class SSLSocketChannel(val underlying: SocketChannel, val sslEngine: SSLEngine)
   def isConnected(): Boolean = underlying.isConnected
 
   def isConnectionPending(): Boolean = underlying.isConnectionPending
+
+  def getRemoteAddress() : SocketAddress = underlying.getRemoteAddress
+
+  def shutdownOutput() : SocketChannel = underlying.shutdownOutput()
+
+  def shutdownInput() : SocketChannel = underlying.shutdownInput()
+
+  def setOption[T](name: SocketOption[T], value: T): SocketChannel = underlying.setOption(name, value)
+
+  def bind(local: SocketAddress) : SocketChannel = underlying.bind(local)
+
+  def supportedOptions() : util.Set[SocketOption[_]] = underlying.supportedOptions()
+
+  def getOption[T](name : SocketOption[T]) = underlying.getOption(name)
+
+  def getLocalAddress() : SocketAddress = underlying.getLocalAddress
+
 
   def connect(remote: SocketAddress): Boolean = {
     debug("SSLSocketChannel Connecting to Remote : " + remote);
