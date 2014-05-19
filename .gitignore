@@ -22,3 +22,7 @@ controller.log*
 .project
 .settings/
 eclipse_bin/
+*.iml
+logs/
+.idea_modules/
+
