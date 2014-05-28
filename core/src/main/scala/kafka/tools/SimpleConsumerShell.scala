@@ -96,6 +96,10 @@ object SimpleConsumerShell extends Logging {
         
     if(args.length == 0)
       CommandLineUtils.printUsageAndDie(parser, "A low-level tool for fetching data directly from a particular replica.")
+    val securityConfigFileOpt = parser.accepts("security.config.file", "Security config file to use for SSL.")
+                           .withRequiredArg
+                           .describedAs("property file")
+                           .ofType(classOf[java.lang.String])
 
     val options = parser.parse(args : _*)
     CommandLineUtils.checkRequiredArgs(parser, options, brokerListOpt, topicOpt, partitionIdOpt)
@@ -112,6 +116,7 @@ object SimpleConsumerShell extends Logging {
     val skipMessageOnError = if (options.has(skipMessageOnErrorOpt)) true else false
     val printOffsets = if(options.has(printOffsetOpt)) true else false
     val noWaitAtEndOfLog = options.has(noWaitAtEndOfLogOpt)
+    val securityConfigFile = options.valueOf(securityConfigFileOpt)
 
     val messageFormatterClass = Class.forName(options.valueOf(messageFormatterOpt))
     val formatterArgs = CommandLineUtils.parseKeyValueArgs(options.valuesOf(messageFormatterArgOpt))
@@ -125,7 +130,7 @@ object SimpleConsumerShell extends Logging {
     // getting topic metadata
     info("Getting topic metatdata...")
     val metadataTargetBrokers = ClientUtils.parseBrokerList(options.valueOf(brokerListOpt))
-    val topicsMetadata = ClientUtils.fetchTopicMetadata(Set(topic), metadataTargetBrokers, clientId, maxWaitMs).topicsMetadata
+    val topicsMetadata = ClientUtils.fetchTopicMetadata(Set(topic), metadataTargetBrokers, clientId, securityConfigFile, maxWaitMs).topicsMetadata
     if(topicsMetadata.size != 1 || !topicsMetadata(0).topic.equals(topic)) {
       System.err.println(("Error: no valid topic metadata for topic: %s, " + "what we get from server is only: %s").format(topic, topicsMetadata))
       System.exit(1)
