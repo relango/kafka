@@ -121,12 +121,8 @@ class KafkaServer(val config: KafkaConfig, time: Time = SystemTime) extends Logg
       topicConfigManager = new TopicConfigManager(zkClient, logManager)
       topicConfigManager.startup()
       /* tell everyone we are alive */
-      kafkaHealthcheck = new KafkaHealthcheck(config.brokerId, config.advertisedHostName, config.advertisedPort, config.zkSessionTimeoutMs, zkClient)
+      kafkaHealthcheck = new KafkaHealthcheck(config.brokerId, config.advertisedHostName, config.advertisedPort, config.secure, config.zkSessionTimeoutMs, zkClient)
       kafkaHealthcheck.startup()
-
-    kafkaHealthcheck = new KafkaHealthcheck(config.brokerId, config.advertisedHostName, config.advertisedPort, config.secure, config.zkSessionTimeoutMs, zkClient)
-    kafkaHealthcheck.startup()
-
 
       registerStats()
       startupComplete.set(true)
