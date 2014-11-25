@@ -57,12 +57,16 @@ class BlockingChannel( val host: String,
       channel.socket.setSoTimeout(readTimeoutMs)
       channel.socket.setKeepAlive(true)
       channel.socket.setTcpNoDelay(true)
+      /*TODO: I had to revert the change made by this commit https://github.com/apache/kafka/commit/91f8ce7eff5c62c619454ad9d67415878805f600
+      to fix the bug https://issues.apache.org/jira/browse/KAFKA-1733 to get it working in secure mode. Need to investigate further
+      to find better way to fix the bug filed in KAFKA-1733
+       */
       channel.connect(new InetSocketAddress(host, port))
 
       writeChannel = channel
       readChannel = Channels.newChannel(Channels.newInputStream(channel))
       connected = true
-      val msg = "Created socket with SO_TIMEOUT = %d (requested %d), SO_RCVBUF = %d (requested %d), SO_SNDBUF = %d (requested %d)."
+      val msg = "Created socket with SO_TIMEOUT = %d (requested %d), SO_RCVBUF = %d (requested %d), SO_SNDBUF = %d (requested %d), connectTimeoutMs = %d."
       debug(msg.format(channel.socket.getSoTimeout,
                        readTimeoutMs,
                        channel.socket.getReceiveBufferSize,
