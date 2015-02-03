@@ -93,8 +93,11 @@ object ClientUtils extends Logging{
     props.put("client.id", clientId)
     props.put("request.timeout.ms", timeoutMs.toString)
     if (securityConfigFile != null){
-      props.put("secure", "true")
-    	props.put("security.config.file", securityConfigFile)
+    	props.put(org.apache.kafka.clients.producer.ProducerConfig.SECURITY_CONFIG_FILE, securityConfigFile)
+    }
+
+    if (!brokers.isEmpty && brokers.head.secure){
+      props.put(org.apache.kafka.clients.producer.ProducerConfig.SECURE, "true")
     }
 
     val producerConfig = new ProducerConfig(props)
