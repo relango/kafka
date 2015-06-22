@@ -290,7 +290,7 @@ private[kafka] class Acceptor(val host: String,
       debug("Accepted connection from %s on %s. sendBufferSize [actual|requested]: [%d|%d] recvBufferSize [actual|requested]: [%d|%d]"
             .format(socketChannel.socket.getInetAddress, socketChannel.socket.getLocalSocketAddress,
                   socketChannel.socket.getSendBufferSize, sendBufferSize,
-                  socketChannel.socket.getReceiveBufferSize))
+                  socketChannel.socket.getReceiveBufferSize, recvBufferSize))
 
       processor.accept(socketChannel)
     } catch {

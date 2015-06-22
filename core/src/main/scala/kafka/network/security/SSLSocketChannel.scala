@@ -497,8 +497,7 @@ class SSLSocketChannel(val underlying: SocketChannel, val sslEngine: SSLEngine)
             return 0
           case SSLEngineResult.Status.CLOSED =>
             if (peerAppData.position == 0) {
-              trace("uwrap: shutdown for %s/%s".format(peerAppData,
-                                                       underlying.socket.getRemoteSocketAddress,
+              trace("uwrap: shutdown with empty peerAppData for %s/%s".format(underlying.socket.getRemoteSocketAddress,
                                                        underlying.socket.getLocalSocketAddress))
               shutdown()
               return -1
