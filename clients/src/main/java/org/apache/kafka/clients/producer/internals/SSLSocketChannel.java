@@ -82,7 +82,6 @@ public class SSLSocketChannel<T> extends SocketChannel {
 
     public static SSLSocketChannel create(SocketChannel sch, String host, int port) throws IOException {
         SSLEngine engine = SecureAuth.getSSLContext().createSSLEngine(host, port);
-        engine.setEnabledProtocols(new String[]{"SSLv3"});
         engine.setUseClientMode(true);
         return new SSLSocketChannel(sch, engine);
     }
