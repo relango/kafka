@@ -466,9 +466,9 @@ public class SSLSocketChannel<T> extends SocketChannel {
                         }
                         break;
                     case BUFFER_OVERFLOW:
-                        int size = (src.remaining() * 2 > sslEngine.getSession().getApplicationBufferSize()) ?
+                        int size = (src.remaining() * 2 > sslEngine.getSession().getPacketBufferSize()) ?
                                                                     src.remaining() * 2 :
-                                                                    sslEngine.getSession().getApplicationBufferSize();
+                                                                    sslEngine.getSession().getPacketBufferSize();
                         myNetData = expand(myNetData, size);
                         break;
                     case CLOSED:

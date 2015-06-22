@@ -538,8 +538,9 @@ class SSLSocketChannel(val underlying: SocketChannel, val sslEngine: SSLEngine)
               if (handshakeStatus == null) return 0
             }
           case SSLEngineResult.Status.BUFFER_OVERFLOW =>
-            val size = if (src.remaining * 2 > sslEngine.getSession.getApplicationBufferSize) src.remaining * 2
-            else sslEngine.getSession.getApplicationBufferSize
+            val size = if (src.remaining * 2 > sslEngine.getSession.getPacketBufferSize) src.remaining * 2
+            else sslEngine.getSession.getPacketBufferSize
+            debug("Buffer overflowed, expanding myNetData size by " + size)
             myNetData = expand(myNetData, size)
           case SSLEngineResult.Status.CLOSED =>
             shutdown()
