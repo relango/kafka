@@ -362,11 +362,15 @@ private[kafka] class Processor(val id: Int,
                 throw new IllegalStateException("Unrecognized key state for processor thread.")
             } catch {
               case e: EOFException => {
-                info("Closing socket connection to %s.".format(channelFor(key).socket.getInetAddress))
+                debug("Closing socket connection to %s.".format(channelFor(key).socket.getInetAddress))
                 close(key)
               }
               case e: InvalidRequestException => {
                 info("Closing socket connection to %s due to invalid request: %s".format(channelFor(key).socket.getInetAddress, e.getMessage))
+                close(key)
+              }
+              case e: IOException => {
+                info("Closing socket for " + channelFor(key).socket.getInetAddress + " because of " + e.getMessage)
                 close(key)
               }
               case e: Throwable => {
@@ -515,6 +519,7 @@ private[kafka] class Processor(val id: Int,
   def write(key: SelectionKey) {
     val channelTuple = key.attachment.asInstanceOf[ChannelTuple]
     val socketChannel = channelFor(key, SelectionKey.OP_WRITE)
+
     if (socketChannel == null) return
     val response = channelTuple.value.asInstanceOf[RequestChannel.Response]
     val responseSend = response.responseSend
@@ -589,12 +594,16 @@ private[kafka] class Processor(val id: Int,
       }
     } catch {
       case e: EOFException => {
-        info("Closing socket connection to %s.".format(channelFor(key).socket.getInetAddress))
+        debug("Closing socket connection to %s.".format(channelFor(key).socket.getInetAddress))
         close(key)
       }
       case e: InvalidRequestException => {
         info("Closing socket connection to %s due to invalid request: %s".format(channelFor(key).socket.getInetAddress,
                                                                                  e.getMessage))
+        close(key)
+      }
+      case e: IOException => {
+        info("Closing socket for " + channelFor(key).socket.getInetAddress + " because of " + e.getMessage)
         close(key)
       }
       case e: Throwable => {
