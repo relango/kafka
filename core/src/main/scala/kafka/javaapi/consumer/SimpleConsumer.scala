@@ -29,9 +29,21 @@ class SimpleConsumer(val host: String,
                      val port: Int,
                      val soTimeout: Int,
                      val bufferSize: Int,
-                     val clientId: String) {
+                     val clientId: String,
+                     val secure: Boolean = false,
+                     val securityConfigFile: String = null) {
 
-  private val underlying = new kafka.consumer.SimpleConsumer(host, port, soTimeout, bufferSize, clientId)
+  /**
+   * Constructor overload that takes the original constructor arguments.  Necessary for Java compilation where default
+   * arguments aren't allowed.
+   */
+  def this(host: String,
+           port: Int,
+           soTimeout: Int,
+           bufferSize: Int,
+           clientId: String) = this(host, port, soTimeout, bufferSize, clientId, false, null)
+
+  private val underlying = new kafka.consumer.SimpleConsumer(host, port, soTimeout, bufferSize, clientId, secure, securityConfigFile)
 
   /**
    *  Fetch a set of messages from a topic. This version of the fetch method
